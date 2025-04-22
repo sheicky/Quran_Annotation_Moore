@@ -268,7 +268,13 @@ class DataManager:
         metadata = self._load_full_metadata()
         
         # Charger les versets pour avoir accès au texte
-        verses_df = pd.read_excel("moore_rwwad_v1.0.1-excel.1.xlsx")
+        s3_path = "s3://moore-collection/raw_data/quran/data.xlsx"
+        storage_options = {
+            "key": os.getenv("AWS_ACCESS_KEY_ID"),
+            "secret": os.getenv("AWS_SECRET_ACCESS_KEY"),
+            "client_kwargs": {"endpoint_url": os.getenv("AWS_S3_ENDPOINT_URL")  }
+        }
+        verses_df = pd.read_excel(s3_path, storage_options=storage_options)
         verses_df.columns = ['id', 'sura', 'aya', 'translation', 'footnotes'] if len(verses_df.columns) >= 5 else verses_df.columns
         
         data = {
